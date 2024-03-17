@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/synthesizerBackground"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".SynthesizerActivity">
+
+    <TextView
+        android:layout_width="166dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="cursive"
+        android:text="@string/waveform"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black" />
+
+    <Spinner
+        android:id="@+id/waveformSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:layout_width="84dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/pitch"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:ignore="TextSizeCheck" />
+
+    <SeekBar
+        android:id="@+id/pitchSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="27dp"
+        android:max="100"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="85dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/volume"
+        android:textSize="16sp"
+        android:textColor="@color/black" />
+
+    <SeekBar
+        android:id="@+id/volumeSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="27dp"
+        android:max="100" />
+
+    <Button
+        android:id="@+id/playButton"
+        android:layout_width="187dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/rounded_button"
+        android:backgroundTintMode="add"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/play_sound"
+        android:textColor="@color/black" />
+
+</LinearLayout>

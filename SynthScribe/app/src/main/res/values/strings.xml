@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SynthScribe</string>
+    <string name="synthScribe">SynthScribe</string>
+    <string name="new_track">New Track</string>
+    <string name="tutorials">Tutorials</string>
+    <string name="my_tracks">My Tracks</string>
+    <string name="waveform">New Track</string>
+    <string name="pitch">Pitch</string>
+    <string name="volume">Volume</string>
+    <string name="play_sound">Play Sound</string>
+    <string-array name="waveform_options">
+        <item>Sine</item>
+        <item>Square</item>
+    </string-array>
+</resources>
+
