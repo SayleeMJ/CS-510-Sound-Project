@@ -54,6 +54,6 @@ I am pleased with the functionality of generating and altering tones. However, I
 - Users can create more complicated pieces by arranging numerous notes and tracks.
 
 ### References
-https://stackoverflow.com/questions/27847168/audio-recording-using-audiorecord
-https://gist.github.com/kmark/d8b1b01fb0d2febf5770
-https://stackoverflow.com/questions/11436472/android-sine-wave-generation
+- https://stackoverflow.com/questions/27847168/audio-recording-using-audiorecord
+- https://gist.github.com/kmark/d8b1b01fb0d2febf5770
+- https://stackoverflow.com/questions/11436472/android-sine-wave-generation
