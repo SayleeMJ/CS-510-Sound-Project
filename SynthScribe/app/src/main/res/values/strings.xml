@@ -8,6 +8,10 @@
     <string name="pitch">Pitch</string>
     <string name="volume">Volume</string>
     <string name="play_sound">Play Sound</string>
+    <string name="stop_sound">Stop Sound</string>
+    <string name="start_sound">Start Sound</string>
+    <string name="add_note">Add Note</string>
+    <string name="save_composition">Save Composition</string>
     <string-array name="waveform_options">
         <item>Sine</item>
         <item>Square</item>
