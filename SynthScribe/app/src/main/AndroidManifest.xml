@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SynthesizerActivity" />
+        <activity android:name=".SavedCompositionsActivity"></activity>
     </application>
 
 </manifest>

@@ -14,11 +14,18 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_home);
 
         Button newTrackButton = findViewById(R.id.newTrackButton);
+        Button myTrackButton = findViewById(R.id.myTracksButton);
 
         newTrackButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SynthesizerActivity.class);
             startActivity(intent);
         });
+
+        myTrackButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SavedCompositionsActivity.class);
+            startActivity(intent);
+        });
+
     }
 }
 
