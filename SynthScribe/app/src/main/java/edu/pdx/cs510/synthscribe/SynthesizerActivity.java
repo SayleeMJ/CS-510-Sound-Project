@@ -5,12 +5,8 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,8 +20,11 @@ public class SynthesizerActivity extends Activity {
 
     private volatile boolean isPlaying = false;
     private volatile double currentPitch = 440.0;
+    private volatile float currentVolume = 1.0f;
     int sampleRate = 44100;
     private double pitch;
+
+    private float volume;
     String tempFilePath;
     private FileOutputStream tempFileOutputStream;
 
@@ -35,31 +34,12 @@ public class SynthesizerActivity extends Activity {
         setContentView(R.layout.activity_synthesizer);
 
         tempFilePath = getExternalFilesDir(null) + "/tempComposition.pcm";
-        setupWaveformSpinner();
         setupPitchSeekBar();
+        setupVolumeSeekBar();
         setupPlayButton();
 
         setupAddButton();
         setupSaveButton();
-    }
-
-    private void setupWaveformSpinner() {
-        Spinner waveformSpinner = findViewById(R.id.waveformSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.waveform_options, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        waveformSpinner.setAdapter(adapter);
-
-        waveformSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-            }
-        });
     }
 
     private void startPlayback() {
@@ -81,7 +61,9 @@ public class SynthesizerActivity extends Activity {
 
         while (isPlaying) {
             currentPitch = pitch;
-            samplesPerWaveLength = (int) (sampleRate / currentPitch);
+            currentVolume = volume;
+            samplesPerWaveLength = (int) ((sampleRate / currentPitch));
+            audioTrack.setVolume(currentVolume);
             for (int i = 0; i < buffer.length; i++) {
                 buffer[i] = (short) (Math.sin(2.0 * Math.PI * angle / samplesPerWaveLength) * Short.MAX_VALUE);
                 angle = (angle + 1) % samplesPerWaveLength;
@@ -120,6 +102,25 @@ public class SynthesizerActivity extends Activity {
         });
     }
 
+    private void setupVolumeSeekBar() {
+        SeekBar volumeSeekBar = findViewById(R.id.volumeSeekBar);
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                volume = progress / 100.0f;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                addNoteToFile();
+            }
+        });
+    }
+
     private void setupPlayButton() {
         Button playButton = findViewById(R.id.playButton);
         playButton.setOnClickListener(v -> {
@@ -137,9 +138,7 @@ public class SynthesizerActivity extends Activity {
     // Add button
     private void setupAddButton() {
         Button addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(v -> {
-            addNoteToFile();
-        });
+        addButton.setOnClickListener(v -> addNoteToFile());
     }
 
     private void addNoteToFile() {
@@ -147,20 +146,20 @@ public class SynthesizerActivity extends Activity {
             if (tempFileOutputStream == null) {
                 tempFileOutputStream = new FileOutputStream(tempFilePath, true);
             }
-            writeNoteToFile(tempFileOutputStream, pitch);
+            writeNoteToFile(tempFileOutputStream, pitch, volume);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void writeNoteToFile(FileOutputStream outputStream, double pitch) throws IOException {
+    private void writeNoteToFile(FileOutputStream outputStream, double pitch, float volume) throws IOException {
         int duration = 1; // seconds for the note's duration
         int numSamples = duration * sampleRate;
         byte[] noteData = new byte[numSamples * 2];
 
         for (int i = 0; i < numSamples; ++i) {
             double angle = 2 * Math.PI * i / (sampleRate / pitch);
-            short val = (short) (Math.sin(angle) * Short.MAX_VALUE);
+            short val = (short) (Math.sin(angle) * Short.MAX_VALUE * volume);
             noteData[i * 2] = (byte) (val & 0xFF);
             noteData[i * 2 + 1] = (byte) ((val >> 8) & 0xFF);
         }
