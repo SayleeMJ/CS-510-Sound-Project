@@ -14,7 +14,7 @@ This Android application is intended to function as a digital synthesizer. It ge
 
 ### How does it work?
 
-Users can control the pitch and volume of the sound using SeekBars. The application generates tones in real-time, allowing for dynamic audio creation. Users can also save their compositions as audio files to their device, enabling them to compile and share their creations.
+Users can control the pitch and volume of the sound using SeekBars. The application generates tones in real time, allowing for dynamic audio creation. Users can also save their compositions as audio files to their devices, enabling them to compile and share their creations.
 
 ## Building and Running
 
@@ -32,7 +32,7 @@ To build and run the Synthesizer App:
 1. Open the app.
 2. Use the pitch SeekBar to select the desired pitch.
 3. Adjust the volume SeekBar to set the volume.
-4. Press the "Play" button to hear the generated tone.
+4. Press the "Play Sound" button to hear and select the desired tone and volume.
 5. Press the "Add Note" button to save the tone.
 6. Use the "Save Composition" button to save all added notes into a file.
 
@@ -46,11 +46,12 @@ To build and run the Synthesizer App:
 
 - Ensuring smooth audio playback across different devices.
 - Implementing an intuitive UI for a seamless user experience.
+- Reading and writing the created composition to files.
 
 ### Satisfaction and Future Improvements
 
 I am pleased with the functionality of generating and altering tones. However, I intend to improve the app by adding more features such as:
-- Adding a greater variety of synthesizer effects.
+- Adding a greater variety of synthesizer effects (eg. Frequency, Echomorph effects, etc.).
 - Users can create more complicated pieces by arranging numerous notes and tracks.
 
 ### References
