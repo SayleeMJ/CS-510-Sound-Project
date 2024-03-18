@@ -5,8 +5,10 @@ import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,30 +27,30 @@ public class SynthesizerActivity extends Activity {
     private double pitch;
 
     private float volume;
-    String tempFilePath;
-    private FileOutputStream tempFileOutputStream;
+    String temporaryFilePath;
+    private FileOutputStream temporaryFileOutputStream;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_synthesizer);
 
-        tempFilePath = getExternalFilesDir(null) + "/tempComposition.pcm";
+        temporaryFilePath = getExternalFilesDir(null) + "/temporaryComposition.pcm";
         setupPitchSeekBar();
         setupVolumeSeekBar();
         setupPlayButton();
 
-        setupAddButton();
+        setAddButton();
         setupSaveButton();
     }
 
     private void startPlayback() {
         isPlaying = true;
-        final Thread playbackThread = new Thread(this::playTone, "Audio Playback Thread");
+        final Thread playbackThread = new Thread(this::playGeneratedTone, "Audio Playback Thread");
         playbackThread.start();
     }
 
-    private void playTone() {
+    private void playGeneratedTone() {
 
         int bufferSize = AudioTrack.getMinBufferSize(sampleRate, AudioFormat.CHANNEL_OUT_MONO, AudioFormat.ENCODING_PCM_16BIT);
         AudioTrack audioTrack = new AudioTrack(AudioManager.STREAM_MUSIC, sampleRate,
@@ -97,7 +99,7 @@ public class SynthesizerActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                addNoteToFile();
+                addNoteToTemporaryFile();
             }
         });
     }
@@ -116,7 +118,7 @@ public class SynthesizerActivity extends Activity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                addNoteToFile();
+                addNoteToTemporaryFile();
             }
         });
     }
@@ -136,23 +138,23 @@ public class SynthesizerActivity extends Activity {
 
 
     // Add button
-    private void setupAddButton() {
+    private void setAddButton() {
         Button addButton = findViewById(R.id.addButton);
-        addButton.setOnClickListener(v -> addNoteToFile());
+        addButton.setOnClickListener(v -> addNoteToTemporaryFile());
     }
 
-    private void addNoteToFile() {
+    private void addNoteToTemporaryFile() {
         try {
-            if (tempFileOutputStream == null) {
-                tempFileOutputStream = new FileOutputStream(tempFilePath, true);
+            if (temporaryFileOutputStream == null) {
+                temporaryFileOutputStream = new FileOutputStream(temporaryFilePath, true);
             }
-            writeNoteToFile(tempFileOutputStream, pitch, volume);
+            writeNoteToTemporaryFile(temporaryFileOutputStream, pitch, volume);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e("SynthesizerActivity", "Error while accessing file!");
         }
     }
 
-    private void writeNoteToFile(FileOutputStream outputStream, double pitch, float volume) throws IOException {
+    private void writeNoteToTemporaryFile(FileOutputStream outputStream, double pitch, float volume) throws IOException {
         int duration = 1; // seconds for the note's duration
         int numSamples = duration * sampleRate;
         byte[] noteData = new byte[numSamples * 2];
@@ -171,27 +173,33 @@ public class SynthesizerActivity extends Activity {
         Button saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(v -> {
             try {
-                saveCompositionAndReset();
+                saveCompositionAndResetTemporaryFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e("SynthesizerActivity", "Error while accessing file!");
             }
         });
     }
 
-    private void saveCompositionAndReset() throws IOException {
-        File tempFile = new File(tempFilePath);
-        File savedFile = new File(getExternalFilesDir(null), "Composition_" + System.currentTimeMillis() + ".pcm");
+    private void saveCompositionAndResetTemporaryFile() throws IOException {
+        File tempFile = new File(temporaryFilePath);
+        File savedFile = new File(getExternalFilesDir(null), "Composition_" + System.currentTimeMillis() + SystemClock.currentGnssTimeClock() + ".pcm");
 
-        try (FileChannel src = new FileInputStream(tempFile).getChannel();
-             FileChannel dest = new FileOutputStream(savedFile).getChannel()) {
+        try (FileInputStream fileInputStream = new FileInputStream(tempFile);
+             FileOutputStream fileOutputStream = new FileOutputStream(savedFile);
+             FileChannel src = fileInputStream.getChannel();
+             FileChannel dest = fileOutputStream.getChannel()) {
             dest.transferFrom(src, 0, src.size());
         }
 
-        if (tempFileOutputStream != null) {
-            tempFileOutputStream.close();
-            tempFileOutputStream = null;
+        if (temporaryFileOutputStream != null) {
+            temporaryFileOutputStream.close();
+            temporaryFileOutputStream = null;
         }
-        tempFile.delete();
-        tempFile.createNewFile();
+        if(!tempFile.delete()){
+            Log.e("SynthesizerActivity", "Error while deleting temporary file!");
+        }
+        if(!tempFile.createNewFile()){
+            Log.e("SynthesizerActivity", "Error while resetting temporary file!");
+        }
     }
 }

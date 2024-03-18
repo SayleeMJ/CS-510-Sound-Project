@@ -7,6 +7,7 @@ import android.media.AudioTrack;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,7 +60,7 @@ public class SavedCompositionsActivity extends Activity {
             audioTrack.stop();
             audioTrack.release();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("SynthesizerActivity", "Error while saving composition file!");
         }
     }
 }
